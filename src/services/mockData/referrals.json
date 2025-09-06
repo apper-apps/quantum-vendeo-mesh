@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ref_001",
+    "referrerName": "Alice Johnson",
+    "refereeName": "Bob Smith",
+    "commissionAmount": 25.50,
+    "status": "completed",
+    "date": "2024-01-15T10:30:00.000Z",
+    "productId": "prod_001"
+  },
+  {
+    "id": "ref_002", 
+    "referrerName": "Carol Davis",
+    "refereeName": "David Wilson",
+    "commissionAmount": 15.00,
+    "status": "pending",
+    "date": "2024-01-20T14:15:00.000Z",
+    "productId": "prod_003"
+  },
+  {
+    "id": "ref_003",
+    "referrerName": "Eva Martinez",
+    "refereeName": "Frank Brown",
+    "commissionAmount": 30.75,
+    "status": "completed",
+    "date": "2024-01-10T09:45:00.000Z",
+    "productId": "prod_002"
+  },
+  {
+    "id": "ref_004",
+    "referrerName": "Grace Lee",
+    "refereeName": "Henry Taylor",
+    "commissionAmount": 20.00,
+    "status": "expired",
+    "date": "2023-12-15T16:20:00.000Z",
+    "productId": "prod_004"
+  },
+  {
+    "id": "ref_005",
+    "referrerName": "Isabella Garcia",
+    "refereeName": "Jack Anderson",
+    "commissionAmount": 35.25,
+    "status": "completed",
+    "date": "2024-01-25T11:10:00.000Z",
+    "productId": "prod_001"
+  },
+  {
+    "id": "ref_006",
+    "referrerName": "Kevin White",
+    "refereeName": "Lisa Thomas",
+    "commissionAmount": 18.50,
+    "status": "pending",
+    "date": "2024-01-28T13:30:00.000Z",
+    "productId": "prod_005"
+  }
+]
