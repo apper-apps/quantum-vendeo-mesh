@@ -1,10 +1,30 @@
 import messagesData from "@/services/mockData/messages.json"
-import conversationsData from "@/services/mockData/conversations.json"
 
 class MessageService {
   constructor() {
     this.messages = [...messagesData]
-    this.conversations = [...conversationsData]
+    
+    // Generate conversations from unique chatIds in messages
+    const uniqueChatIds = [...new Set(this.messages.map(m => m.chatId))]
+    this.conversations = uniqueChatIds.map((chatId, index) => {
+      const chatMessages = this.messages.filter(m => m.chatId === chatId)
+      const lastMessage = chatMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0]
+      
+      return {
+        Id: index + 1,
+        chatId,
+        participants: ["current-user", `user-${chatId}`],
+        lastMessage: lastMessage ? {
+          content: lastMessage.content,
+          type: lastMessage.type,
+          timestamp: lastMessage.timestamp,
+          senderId: lastMessage.senderId
+        } : null,
+        isRead: lastMessage?.isRead || false,
+        createdAt: chatMessages[0]?.timestamp || new Date().toISOString()
+      }
+    })
+    
     this.nextMessageId = Math.max(...this.messages.map(m => m.Id)) + 1
     this.nextConversationId = Math.max(...this.conversations.map(c => c.Id)) + 1
   }
@@ -13,12 +33,12 @@ class MessageService {
     return new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 200))
   }
 
-  async getConversations() {
+async getConversations() {
     await this.delay()
     return [...this.conversations]
   }
 
-  async getConversationById(chatId) {
+async getConversationById(chatId) {
     await this.delay()
     const conversation = this.conversations.find(c => c.chatId === chatId)
     return conversation ? { ...conversation } : null
@@ -42,6 +62,7 @@ class MessageService {
     this.messages.push(newMessage)
     
     // Update conversation with latest message
+// Update conversation last message
     const conversationIndex = this.conversations.findIndex(c => c.chatId === messageData.chatId)
     if (conversationIndex !== -1) {
       this.conversations[conversationIndex].lastMessage = {
@@ -50,6 +71,23 @@ class MessageService {
         timestamp: newMessage.timestamp,
         senderId: newMessage.senderId
       }
+      this.conversations[conversationIndex].isRead = false
+    } else {
+      // Create new conversation if it doesn't exist
+      const newConversation = {
+        Id: this.nextConversationId++,
+        chatId: messageData.chatId,
+        participants: ["current-user", `user-${messageData.chatId}`],
+        lastMessage: {
+          content: newMessage.content,
+          type: newMessage.type,
+          timestamp: newMessage.timestamp,
+          senderId: newMessage.senderId
+        },
+        isRead: false,
+        createdAt: newMessage.timestamp
+      }
+      this.conversations.push(newConversation)
     }
     
     return { ...newMessage }
