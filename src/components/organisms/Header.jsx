@@ -1,34 +1,48 @@
-import { useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
-import Button from "@/components/atoms/Button"
-import Avatar from "@/components/atoms/Avatar"
-import Badge from "@/components/atoms/Badge"
-import ApperIcon from "@/components/ApperIcon"
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { changeLanguage, useTranslation } from "@/i18n/translations";
+import ApperIcon from "@/components/ApperIcon";
+import Badge from "@/components/atoms/Badge";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
 
 const Header = ({ className = "" }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const [showNotifications, setShowNotifications] = useState(false)
 
+const { t, currentLanguage } = useTranslation()
+  const [, forceUpdate] = useState(0)
+
+  useEffect(() => {
+    const handleLanguageChange = () => forceUpdate(prev => prev + 1)
+    window.addEventListener('languageChanged', handleLanguageChange)
+    return () => window.removeEventListener('languageChanged', handleLanguageChange)
+  }, [])
+
   const getPageTitle = () => {
     switch (location.pathname) {
       case "/":
-        return "Vendeo"
+        return t("vendeo")
       case "/search":
-        return "Search"
+        return t("search")
       case "/messages":
-        return "Messages"
+        return t("messages")
       case "/profile":
-        return "Profile"
+        return t("profile")
       case "/sell":
-        return "Sell Item"
+        return t("sellItem")
       case "/referrals":
-        return "Referrals"
+        return t("referrals")
       default:
-        return "Vendeo"
+        return t("vendeo")
     }
   }
 
+const toggleLanguage = () => {
+    const newLang = currentLanguage === 'en' ? 'fr' : 'en'
+    changeLanguage(newLang)
+  }
   const shouldShowBackButton = () => {
     return location.pathname !== "/" && 
            location.pathname !== "/search" && 
@@ -63,7 +77,18 @@ const Header = ({ className = "" }) => {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-3">
+<div className="flex items-center space-x-3">
+          {/* Language Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleLanguage}
+            className="hidden sm:flex items-center space-x-1 text-gray-600"
+          >
+            <ApperIcon name="Globe" size={16} />
+            <span className="text-sm">{currentLanguage.toUpperCase()}</span>
+          </Button>
+
           {/* Location Indicator */}
           {location.pathname === "/" && (
             <Button
@@ -73,7 +98,7 @@ const Header = ({ className = "" }) => {
               className="hidden sm:flex items-center space-x-1 text-gray-600"
             >
               <ApperIcon name="MapPin" size={16} />
-              <span className="text-sm">San Francisco, CA</span>
+              <span className="text-sm">{t("location")}</span>
               <ApperIcon name="ChevronDown" size={14} />
             </Button>
           )}
@@ -100,7 +125,7 @@ const Header = ({ className = "" }) => {
             {showNotifications && (
               <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border z-50">
                 <div className="p-4 border-b">
-                  <h3 className="font-medium text-gray-900">Notifications</h3>
+<h3 className="font-medium text-gray-900">{t("notifications")}</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {/* Sample notifications */}
@@ -108,10 +133,10 @@ const Header = ({ className = "" }) => {
                     <div className="flex items-start space-x-3">
                       <Avatar size="sm" fallback="J" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900">
-                          <span className="font-medium">John</span> is interested in your iPhone 13
+<p className="text-sm text-gray-900">
+                          <span className="font-medium">John</span> {t("interestedIn")} iPhone 13
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">2 minutes ago</p>
+<p className="text-xs text-gray-500 mt-1">2 {t("minutesAgo")}</p>
                       </div>
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
                     </div>
@@ -122,10 +147,10 @@ const Header = ({ className = "" }) => {
                         <ApperIcon name="DollarSign" size={14} className="text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900">
-                          You earned $5 from a referral!
+<p className="text-sm text-gray-900">
+                          {t("earnedFromReferral")}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">1 hour ago</p>
+<p className="text-xs text-gray-500 mt-1">1 {t("hourAgo")}</p>
                       </div>
                     </div>
                   </div>
@@ -133,17 +158,17 @@ const Header = ({ className = "" }) => {
                     <div className="flex items-start space-x-3">
                       <Avatar size="sm" fallback="M" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Mike</span> left you a 5-star review
+<p className="text-sm text-gray-600">
+                          <span className="font-medium">Mike</span> {t("leftReview")}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">3 hours ago</p>
+<p className="text-xs text-gray-500 mt-1">3 {t("hoursAgo")}</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-3 text-center border-t">
                   <Button variant="ghost" size="sm" className="text-primary">
-                    View All Notifications
+{t("viewAllNotifications")}
                   </Button>
                 </div>
               </div>
@@ -156,9 +181,9 @@ const Header = ({ className = "" }) => {
             size="sm"
             onClick={() => navigate("/referrals")}
             className="hidden sm:flex items-center space-x-1 text-gray-600"
-          >
+>
             <ApperIcon name="Users" size={16} />
-            <span className="text-sm">Earn $5</span>
+            <span className="text-sm">{t("earnFive")}</span>
           </Button>
 
           {/* Profile */}

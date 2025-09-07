@@ -1,16 +1,18 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import Card from "@/components/atoms/Card"
-import Badge from "@/components/atoms/Badge"
-import Button from "@/components/atoms/Button"
-import Avatar from "@/components/atoms/Avatar"
-import ApperIcon from "@/components/ApperIcon"
-import { formatDistance } from "date-fns"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { formatDistance } from "date-fns";
+import { useTranslation } from "@/i18n/translations";
+import ApperIcon from "@/components/ApperIcon";
+import Badge from "@/components/atoms/Badge";
+import Card from "@/components/atoms/Card";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
 
 const ProductCard = ({ product, className = "" }) => {
-  const navigate = useNavigate()
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isLiked, setIsLiked] = useState(false)
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
 
   const handleProductClick = () => {
     navigate(`/product/${product.Id}`)
@@ -93,8 +95,8 @@ const ProductCard = ({ product, className = "" }) => {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col space-y-1">
           {product.isSponsored && (
-            <Badge variant="sponsored" size="xs">
-              Sponsored
+<Badge variant="sponsored" size="xs">
+              {t("sponsored")}
             </Badge>
           )}
           <Badge variant="primary" size="xs">
@@ -174,7 +176,7 @@ const ProductCard = ({ product, className = "" }) => {
             }}
           >
             <ApperIcon name="MessageCircle" size={14} />
-            Message
+{t("message")}
           </Button>
           <Button 
             variant="outline" 

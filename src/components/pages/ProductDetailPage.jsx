@@ -1,86 +1,89 @@
-import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import Button from "@/components/atoms/Button"
-import Badge from "@/components/atoms/Badge"
-import Card from "@/components/atoms/Card"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import SellerProfileCard from "@/components/molecules/SellerProfileCard"
-import ProductCard from "@/components/molecules/ProductCard"
-import ApperIcon from "@/components/ApperIcon"
-import { productService } from "@/services/api/productService"
-import { userService } from "@/services/api/userService"
-import { formatDistance } from "date-fns"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { productService } from "@/services/api/productService";
+import { userService } from "@/services/api/userService";
+import { formatDistance } from "date-fns";
+import { toast } from "react-toastify";
+import { useTranslation } from "@/i18n/translations";
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import ProductCard from "@/components/molecules/ProductCard";
+import SellerProfileCard from "@/components/molecules/SellerProfileCard";
+import Badge from "@/components/atoms/Badge";
+import Card from "@/components/atoms/Card";
+import Button from "@/components/atoms/Button";
 
 const ProductDetailPage = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [product, setProduct] = useState(null)
-  const [seller, setSeller] = useState(null)
-  const [relatedProducts, setRelatedProducts] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isLiked, setIsLiked] = useState(false)
-  const [isWatchlisted, setIsWatchlisted] = useState(false)
+  const { t } = useTranslation();
+  const { id } = useParams();
+  const navigate = useNavigate();
+const [product, setProduct] = useState(null);
+  const [seller, setSeller] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isWatchlisted, setIsWatchlisted] = useState(false);
 
   const loadProductData = async () => {
     try {
-      setLoading(true)
-      setError("")
+setLoading(true);
+      setError("");
       
       // Load product details
-      const productData = await productService.getById(parseInt(id))
+      const productData = await productService.getById(parseInt(id));
       if (!productData) {
-        throw new Error("Product not found")
+        throw new Error("Product not found");
       }
-      setProduct(productData)
+      setProduct(productData);
 
-      // Load seller info
-      const sellerData = await userService.getById(productData.sellerId)
-      setSeller(sellerData)
+// Load seller info
+      const sellerData = await userService.getById(productData.sellerId);
+      setSeller(sellerData);
 
       // Load related products
-      const allProducts = await productService.getAll()
+      const allProducts = await productService.getAll();
       const related = allProducts
         .filter(p => p.Id !== productData.Id && p.category === productData.category)
-        .slice(0, 4)
-      setRelatedProducts(related)
+        .slice(0, 4);
+      setRelatedProducts(related);
 
-    } catch (err) {
-      setError(err.message || "Failed to load product")
+} catch (err) {
+      setError(err.message || "Failed to load product");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    loadProductData()
-  }, [id])
+useEffect(() => {
+    loadProductData();
+  }, [id]);
 
   const handleImageChange = (direction) => {
-    if (!product?.images) return
+const handleImageChange = (direction) => {
+    if (!product?.images) return;
     
     if (direction === "next") {
       setCurrentImageIndex((prev) => 
         prev === product.images.length - 1 ? 0 : prev + 1
-      )
+      );
     } else {
       setCurrentImageIndex((prev) => 
         prev === 0 ? product.images.length - 1 : prev - 1
-      )
+      );
     }
-  }
+  };
 
-  const handleContactSeller = () => {
-    navigate(`/chat/new?productId=${id}&sellerId=${product.sellerId}`)
-  }
+const handleContactSeller = () => {
+    navigate(`/chat/new?productId=${id}&sellerId=${product.sellerId}`);
+  };
 
   const handleMakeOffer = () => {
     // In a real app, this would open an offer modal
-    toast.info("Offer functionality coming soon!")
-  }
+    toast.info("Offer functionality coming soon!");
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -88,33 +91,33 @@ const ProductDetailPage = () => {
         title: product.title,
         text: product.description,
         url: window.location.href
-      })
+      });
     } else {
-      navigator.clipboard.writeText(window.location.href)
-      toast.success("Link copied to clipboard!")
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
     }
-  }
+  };
 
   const handleLike = () => {
-    setIsLiked(!isLiked)
-    toast.success(isLiked ? "Removed from favorites" : "Added to favorites")
-  }
+    setIsLiked(!isLiked);
+    toast.success(isLiked ? "Removed from favorites" : "Added to favorites");
+  };
 
   const handleWatchlist = () => {
-    setIsWatchlisted(!isWatchlisted)
-    toast.success(isWatchlisted ? "Removed from watchlist" : "Added to watchlist")
-  }
+    setIsWatchlisted(!isWatchlisted);
+    toast.success(isWatchlisted ? "Removed from watchlist" : "Added to watchlist");
+  };
 
-  if (loading) {
-    return <Loading message="Loading product details..." />
+if (loading) {
+    return <Loading message="Loading product details..." />;
   }
 
   if (error) {
-    return <Error message={error} onRetry={loadProductData} />
+    return <Error message={error} onRetry={loadProductData} />;
   }
 
-  if (!product) {
-    return <Error message="Product not found" />
+if (!product) {
+    return <Error message="Product not found" />;
   }
 
   return (
@@ -236,7 +239,7 @@ const ProductDetailPage = () => {
               </div>
 
               <div className="prose max-w-none mb-6">
-                <h3 className="font-medium text-gray-900 mb-2">Description</h3>
+<h3 className="font-medium text-gray-900 mb-2">{t("description")}</h3>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                   {product.description}
                 </p>
@@ -244,24 +247,24 @@ const ProductDetailPage = () => {
 
               {/* Product Details */}
               <div className="border-t pt-4">
-                <h3 className="font-medium text-gray-900 mb-3">Details</h3>
+<h3 className="font-medium text-gray-900 mb-3">{t("details")}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Condition:</span>
+<span className="text-gray-500">{t("condition")}</span>
                     <div className="font-medium text-gray-900">{product.condition}</div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Category:</span>
+<span className="text-gray-500">{t("category")}</span>
                     <div className="font-medium text-gray-900">{product.category}</div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Listed:</span>
+<span className="text-gray-500">{t("listed")}</span>
                     <div className="font-medium text-gray-900">
                       {formatDistance(new Date(product.createdAt), new Date(), { addSuffix: true })}
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Location:</span>
+<span className="text-gray-500">{t("location2")}</span>
                     <div className="font-medium text-gray-900">
                       {product.location.city}, {product.location.state}
                     </div>
@@ -281,8 +284,8 @@ const ProductDetailPage = () => {
                     onClick={handleContactSeller}
                     className="flex-1"
                     icon="MessageCircle"
-                  >
-                    Message Seller
+>
+                    {t("messageSeller")}
                   </Button>
                   
                   <Button
@@ -322,24 +325,24 @@ const ProductDetailPage = () => {
             {/* Safety Tips */}
             <Card>
               <h3 className="font-display font-semibold text-lg text-gray-900 mb-4">
-                🛡️ Safety Tips
+{t("safetyTips")}
               </h3>
               <div className="space-y-3 text-sm text-gray-600">
                 <div className="flex items-start space-x-2">
-                  <ApperIcon name="MapPin" size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                  <span>Meet in a public, well-lit location</span>
+<ApperIcon name="MapPin" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("meetInPublic")}</span>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <ApperIcon name="Users" size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                  <span>Bring a friend if possible</span>
+<ApperIcon name="Users" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("bringFriend")}</span>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <ApperIcon name="Eye" size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                  <span>Inspect the item before purchasing</span>
+<ApperIcon name="Eye" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("inspectItem")}</span>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <ApperIcon name="AlertTriangle" size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                  <span>Trust your instincts</span>
+<ApperIcon name="AlertTriangle" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                  <span>{t("trustInstincts")}</span>
                 </div>
               </div>
             </Card>
@@ -351,8 +354,8 @@ const ProductDetailPage = () => {
                 size="sm"
                 className="w-full text-red-600 border-red-200 hover:bg-red-50"
               >
-                <ApperIcon name="Flag" size={16} />
-                Report this listing
+<ApperIcon name="Flag" size={16} />
+                {t("reportListing")}
               </Button>
             </Card>
           </div>
@@ -362,14 +365,14 @@ const ProductDetailPage = () => {
         {relatedProducts.length > 0 && (
           <div className="mt-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display font-semibold text-xl text-gray-900">
-                Similar Items
+<h2 className="font-display font-semibold text-xl text-gray-900">
+                {t("similarItems")}
               </h2>
               <Button
                 variant="ghost"
                 onClick={() => navigate(`/search?category=${product.category}`)}
               >
-                View All
+{t("viewAll")}
                 <ApperIcon name="ChevronRight" size={16} />
               </Button>
             </div>
@@ -381,9 +384,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
         )}
-      </div>
+</div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductDetailPage
+export default ProductDetailPage;

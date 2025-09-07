@@ -1,18 +1,20 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import SearchBar from "@/components/molecules/SearchBar"
-import Button from "@/components/atoms/Button"
-import Avatar from "@/components/atoms/Avatar"
-import Badge from "@/components/atoms/Badge"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
-import { messageService } from "@/services/api/messageService"
-import { formatDistance } from "date-fns"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { messageService } from "@/services/api/messageService";
+import { formatDistance } from "date-fns";
+import { useTranslation } from "@/i18n/translations";
+import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Loading from "@/components/ui/Loading";
+import SearchBar from "@/components/molecules/SearchBar";
+import Badge from "@/components/atoms/Badge";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
 
 const MessagesPage = () => {
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [conversations, setConversations] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -71,10 +73,10 @@ const MessagesPage = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="font-display font-bold text-2xl text-gray-900 mb-2">
-            Messages
+{t("messages")}
           </h1>
           <p className="text-gray-600">
-            Stay connected with buyers and sellers
+{t("stayConnected")}
           </p>
         </div>
 
@@ -82,16 +84,16 @@ const MessagesPage = () => {
         <div className="mb-6">
           <SearchBar 
             onSearch={handleSearch}
-            placeholder="Search conversations..."
+placeholder={t("searchConversations")}
             className="mb-4"
           />
           
           {/* Filter Tabs */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
             {[
-              { key: "all", label: "All", count: conversations.length },
-              { key: "unread", label: "Unread", count: conversations.filter(c => c.unreadCount > 0).length },
-              { key: "archived", label: "Archived", count: conversations.filter(c => c.archived).length }
+{ key: "all", label: t("all"), count: conversations.length },
+              { key: "unread", label: t("unread"), count: conversations.filter(c => c.unreadCount > 0).length },
+              { key: "archived", label: t("archived"), count: conversations.filter(c => c.archived).length }
             ].map((tab) => (
               <Button
                 key={tab.key}
@@ -118,10 +120,10 @@ const MessagesPage = () => {
         {/* Conversations List */}
         {filteredConversations.length === 0 ? (
           <Empty
-            icon="MessageCircle"
-            title="No conversations yet"
-            description="Start chatting with sellers and buyers to see your messages here."
-            actionText="Browse Products"
+icon="MessageCircle"
+            title={t("noConversationsYet")}
+description={t("startChatting")}
+            actionText={t("browseProducts")}
             onAction={() => navigate("/")}
           />
         ) : (
@@ -167,7 +169,7 @@ const MessagesPage = () => {
                       {conversation.lastMessage.type === "audio" ? (
                         <div className="flex items-center space-x-1 text-gray-600">
                           <ApperIcon name="Mic" size={12} />
-                          <span className="text-sm">Voice message</span>
+<span className="text-sm">{t("voiceMessage")}</span>
                         </div>
                       ) : (
                         <p className="text-sm text-gray-600 truncate max-w-[200px] sm:max-w-[300px]">
@@ -202,7 +204,7 @@ const MessagesPage = () => {
 
         {/* Quick Actions */}
         <div className="mt-8 bg-white rounded-xl p-6 shadow-sm">
-          <h3 className="font-medium text-gray-900 mb-4">Quick Actions</h3>
+<h3 className="font-medium text-gray-900 mb-4">{t("quickActions")}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button
               variant="outline"
@@ -210,7 +212,7 @@ const MessagesPage = () => {
               className="flex items-center justify-center space-x-2"
             >
               <ApperIcon name="Search" size={16} />
-              <span>Find Products to Buy</span>
+<span>{t("findProductsToBuy")}</span>
             </Button>
             
             <Button
@@ -218,8 +220,8 @@ const MessagesPage = () => {
               onClick={() => navigate("/sell")}
               className="flex items-center justify-center space-x-2"
             >
-              <ApperIcon name="Plus" size={16} />
-              <span>List Something to Sell</span>
+<ApperIcon name="Plus" size={16} />
+              <span>{t("listSomethingToSell")}</span>
             </Button>
           </div>
         </div>

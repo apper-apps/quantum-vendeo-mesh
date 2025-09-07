@@ -1,13 +1,15 @@
-import { useState } from "react"
-import Card from "@/components/atoms/Card"
-import Button from "@/components/atoms/Button"
-import Badge from "@/components/atoms/Badge"
-import ApperIcon from "@/components/ApperIcon"
-import { toast } from "react-toastify"
-import { formatDistance } from "date-fns"
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { formatDistance } from "date-fns";
+import { useTranslation } from "@/i18n/translations";
+import ApperIcon from "@/components/ApperIcon";
+import Badge from "@/components/atoms/Badge";
+import Card from "@/components/atoms/Card";
+import Button from "@/components/atoms/Button";
 
 const ReferralCard = ({ referralData, className = "" }) => {
-  const [copied, setCopied] = useState(false)
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralData.referralLink)
@@ -44,7 +46,7 @@ const ReferralCard = ({ referralData, className = "" }) => {
           </div>
           <h2 className="font-display font-bold text-3xl mb-1">
             ${referralData.totalEarnings.toFixed(2)}
-          </h2>
+</h2>
           <p className="text-white/80">Total Earned</p>
         </div>
 
@@ -52,17 +54,17 @@ const ReferralCard = ({ referralData, className = "" }) => {
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-white/10 rounded-lg p-3">
             <div className="font-bold text-xl">{referralData.totalReferrals}</div>
-            <div className="text-sm text-white/80">Total Referrals</div>
+<div className="text-sm text-white/80">{t("totalReferrals")}</div>
           </div>
           <div className="bg-white/10 rounded-lg p-3">
             <div className="font-bold text-xl">{referralData.monthlyReferrals}</div>
-            <div className="text-sm text-white/80">This Month</div>
+<div className="text-sm text-white/80">{t("thisMonth")}</div>
           </div>
         </div>
 
         {/* Referral Link */}
         <div className="bg-white/10 rounded-lg p-4 mb-4">
-          <p className="text-sm text-white/80 mb-2">Your Referral Link</p>
+<p className="text-sm text-white/80 mb-2">{t("yourReferralLink")}</p>
           <div className="flex items-center space-x-2">
             <div className="bg-white/20 rounded px-3 py-2 text-sm font-mono flex-1 text-left truncate">
               {referralData.referralLink}
@@ -74,7 +76,7 @@ const ReferralCard = ({ referralData, className = "" }) => {
               className="text-white hover:bg-white/20 flex-shrink-0"
             >
               <ApperIcon name={copied ? "Check" : "Copy"} size={16} />
-              {copied ? "Copied!" : "Copy"}
+{copied ? t("copied") : t("copy")}
             </Button>
           </div>
         </div>
@@ -113,18 +115,18 @@ const ReferralCard = ({ referralData, className = "" }) => {
         {/* Recent Activity */}
         {referralData.recentActivity && referralData.recentActivity.length > 0 && (
           <div className="bg-white/10 rounded-lg p-4">
-            <h3 className="font-medium mb-3">Recent Activity</h3>
+<h3 className="font-medium mb-3">{t("recentActivity")}</h3>
             <div className="space-y-2">
               {referralData.recentActivity.slice(0, 3).map((activity, index) => (
                 <div key={index} className="flex items-center justify-between text-sm">
                   <div className="flex items-center space-x-2">
                     <ApperIcon name="UserPlus" size={12} />
-                    <span>{activity.userName} joined</span>
+<span>{activity.userName} {t("joined")}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>+${activity.reward}</span>
-                    <Badge variant="success" size="xs">
-                      {activity.status}
+<Badge variant="success" size="xs">
+                      {activity.status === "pending" ? t("pending") : activity.status}
                     </Badge>
                   </div>
                 </div>
@@ -135,9 +137,11 @@ const ReferralCard = ({ referralData, className = "" }) => {
 
         {/* How It Works */}
         <div className="mt-6 pt-4 border-t border-white/20 text-left">
-          <h4 className="font-medium mb-2">How It Works</h4>
+<h4 className="font-medium mb-2">{t("howItWorks")}</h4>
           <div className="space-y-2 text-sm text-white/80">
             <div className="flex items-start space-x-2">
+<div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs mt-0.5">1</div>
+<div className="flex items-start space-x-2">
               <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs mt-0.5">1</div>
               <span>Share your referral link with friends</span>
             </div>
@@ -147,13 +151,13 @@ const ReferralCard = ({ referralData, className = "" }) => {
             </div>
             <div className="flex items-start space-x-2">
               <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs mt-0.5">3</div>
-              <span>You both earn $5 credit!</span>
+              <span>You both earn rewards!</span>
             </div>
           </div>
         </div>
       </div>
     </Card>
-  )
-}
+);
+};
 
-export default ReferralCard
+export default ReferralCard;
