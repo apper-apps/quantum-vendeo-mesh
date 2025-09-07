@@ -4,15 +4,16 @@ import { productService } from "@/services/api/productService";
 import { userService } from "@/services/api/userService";
 import { formatDistance } from "date-fns";
 import { toast } from "react-toastify";
-import { useTranslation } from "@/i18n/translations";
 import ApperIcon from "@/components/ApperIcon";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
+import ReferralCard from "@/components/molecules/ReferralCard";
 import ProductCard from "@/components/molecules/ProductCard";
 import SellerProfileCard from "@/components/molecules/SellerProfileCard";
 import Badge from "@/components/atoms/Badge";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
+import { useTranslation } from "@/i18n/translations";
 
 const ProductDetailPage = () => {
   const { t } = useTranslation();
@@ -61,7 +62,6 @@ useEffect(() => {
     loadProductData();
   }, [id]);
 
-  const handleImageChange = (direction) => {
 const handleImageChange = (direction) => {
     if (!product?.images) return;
     
@@ -385,6 +385,7 @@ if (!product) {
           </div>
         )}
 </div>
+      </div>
     </div>
   );
 };
