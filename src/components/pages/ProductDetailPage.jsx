@@ -382,9 +382,8 @@ if (!product) {
                 <ProductCard key={relatedProduct.Id} product={relatedProduct} />
               ))}
             </div>
-          </div>
-        )}
 </div>
+        )}
       </div>
     </div>
   );
